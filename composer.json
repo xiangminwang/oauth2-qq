@@ -1,0 +1,20 @@
+{
+    "name": "xiangminwang/oauth2-qq",
+    "description": "QQ provider for league/oauth2-client",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Xiangmin Wang",
+            "email": "wang@xiangmin.net"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "league/oauth2-client": "~0.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "XiangminWang\\OAuth2\\Client\\Provider\\": "src/"
+        }
+    }
+}
