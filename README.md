@@ -1,4 +1,4 @@
-# QAuth2-QQ
+# OAuth2-QQ
 QQ provider for league/oauth2-client
 
 ## Installation
