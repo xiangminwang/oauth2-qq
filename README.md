@@ -17,6 +17,6 @@ $provider = new XiangminWang\OAuth2\Client\Provider\Qq([
 
 ## TODO
 
-- [ ] Beta version
+- [x] Beta version
 - [ ] Unit tests
-- [x] Full feature support
+- [ ] Full feature support
