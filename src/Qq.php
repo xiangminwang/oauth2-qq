@@ -10,6 +10,7 @@ class Qq extends \League\OAuth2\Client\Provider\AbstractProvider
     public $responseType = 'string';
     public $domain = 'https://graph.qq.com/oauth2.0';
     public $apiDomain = 'https://graph.qq.com/user';
+    public $openid = ''; // only stupid tencent offers this..
 
     public function urlAuthorize()
     {
@@ -28,7 +29,7 @@ class Qq extends \League\OAuth2\Client\Provider\AbstractProvider
 
     public function getUserDetails(\League\OAuth2\Client\Token\AccessToken $token)
     {
-        // fetch openid from '/me' with access_token
+        // Fetching openid from '/me' with access_token
         $openid_response = $this->fetchUserDetails($token);
 
         // pickup openid
@@ -39,24 +40,22 @@ class Qq extends \League\OAuth2\Client\Provider\AbstractProvider
             $first_open_brace_pos,
             $last_close_brace_pos - $first_open_brace_pos + 1
         ));
+
         $this->openid = $openid_response->openid;
 
         // fetch QQ user profile
-        $params = array(
+        $params = [
             'access_token' => $token->accessToken,
             'oauth_consumer_key' => $this->clientId,
-            'openid' => $openid_response->openid
-        );
-        $response = $this->httpClient->get($apiDomain . '/get_user_info?' . http_build_query($params));
+            'openid' => $this->openid
+        ];
 
-        // check response
-        if (is_array($response) && (isset($response['error']) || isset($response['message']))) {
-            throw new \League\OAuth2\Client\Exception\IDPException($response);
-        }
+        $request = $this->httpClient->get($this->apiDomain . '/get_user_info?' . http_build_query($params));
+        $response = json_decode($request->send()->getBody());
 
-        $response = json_decode($response);
-
-        if (!isset($response->ret) || $response->ret != 0) {
+        // check response status
+        if ($response->ret < 0) {
+            // handle tencent's style exception.
             $result['code'] = $response->ret;
             $result['message'] = $response->msg;
             throw new \League\OAuth2\Client\Exception\IDPException($result);
@@ -72,11 +71,11 @@ class Qq extends \League\OAuth2\Client\Provider\AbstractProvider
         $email = (isset($response->email)) ? $response->email : null;
         $imageUrl = (isset($response->figureurl)) ? $response->figureurl : null;
         $user->exchangeArray([
-            'uid' => $response->openid,
+            'uid' => $this->openid,
             'nickname' => $response->nickname,
             'name' => $name,
             'email' => $email,
-            'imageUrl' => $figureurl,
+            'imageUrl' => $imageUrl,
             'urls'  => null,
         ]);
 
