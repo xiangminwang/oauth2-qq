@@ -67,14 +67,14 @@ class Qq extends \League\OAuth2\Client\Provider\AbstractProvider
     public function userDetails($response, \League\OAuth2\Client\Token\AccessToken $token)
     {
         $user = new User();
-        $name = (isset($response->name)) ? $response->name : null;
-        $email = (isset($response->email)) ? $response->email : null;
+        $gender = (isset($response->gender)) ? $response->gender : null;
+        $province = (isset($response->province)) ? $response->province : null;
         $imageUrl = (isset($response->figureurl)) ? $response->figureurl : null;
         $user->exchangeArray([
             'uid' => $this->openid,
             'nickname' => $response->nickname,
-            'name' => $name,
-            'email' => $email,
+            'gender' => $gender,
+            'province' => $province,
             'imageUrl' => $imageUrl,
             'urls'  => null,
         ]);
